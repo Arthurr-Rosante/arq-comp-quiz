@@ -1,4 +1,23 @@
-const questoesMap = new Map();
+const questions = [
+    { answer: "CPU", statement: "Componente do computador responsável por buscar, decodificar e executar instruções vindas da memória do computador." },
+    { answer: "ULA", statement: "Unidade central de qualquer microprocessador responsável por executar operações aritméticas e lógicas." },
+    { answer: "REGISTRADORES", statement: "Categoria de memória localizada dentro da CPU que lidera a hierarquia das memórias, sendo extremamente pequena e rápida." },
+    { answer: "RAM", statement: "Categoria de memória volátil que possui acesso direto à CPU e funciona como bancada de trabalho do computador." },
+    { answer: "ROM", statement: "Categoria de memória pré-programada utilizada para armazenar firmwares e softwares imutáveis como a BIOS." },
+    { answer: "EPROM", statement: "Categoria de memória ROM não volátil que pode ser reprogramada através de luz ultravioleta." },
+    { answer: "FLASH", statement: "Categoria de memória não volátil utilizada em SSDs e pen drives por oferecer alta velocidade e durabilidade." },
+    { answer: "MEMORIADEMASSA", statement: "Categoria de armazenamento não volátil responsável por guardar permanentemente grandes quantidades de dados." },
+    { answer: "DMA", statement: "Tecnologia que permite dispositivos de entrada e saída acessarem diretamente a memória RAM sem passar pela CPU." },
+    { answer: "CS", statement: "Pino de controle responsável por ativar ou desativar chips específicos em um sistema." },
+    { answer: "ADDRESSBUS", statement: "Categoria de barramento responsável por transmitir endereços de memória para leitura ou gravação de dados (em inglês)." },
+    { answer: "DATABUS", statement: "Categoria de barramento responsável por transmitir dados entre os componentes do computador (em inglês)." },
+    { answer: "I5", statement: "Nome da linha intermediária de microprocessadores da Intel." },
+    { answer: "I7", statement: "Nome da linha de ponta de microprocessadores da Intel." },
+    { answer: "DUALCORE", statement: "Tecnologia de microprocessadores onde dois núcleos físicos compartilham recursos para melhorar o desempenho." },
+    { answer: "QUADCORE", statement: "Tecnologia de microprocessadores onde quatro núcleos físicos compartilham recursos para melhorar o desempenho." },
+];
+
+const allowedCharacters = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ57"];
 
 function generateTermo(question, numTries) {
     const {answer, statement} = question;
@@ -13,7 +32,7 @@ function generateTermo(question, numTries) {
 
     generateStatement(termoGrid, statement);
     for (let i = 0; i < numTries; i++) {
-        generateRow(termoGrid, answer.length);    
+        generateRow(termoGrid, (i+1), answer.length);    
     }
 }
 
@@ -25,7 +44,7 @@ function generateStatement(grid, statement) {
     grid.appendChild(statementDiv);
 }
 
-function generateRow(grid, size) {
+function generateRow(grid, numTrie, size) {
     if(typeof size !== "number") return;
 
     const row = document.createElement("div");
@@ -36,11 +55,34 @@ function generateRow(grid, size) {
         letterEl.classList.add("letter");
 
         letterEl.name = "ipt-letter";
+        letterEl.type = "text";
+        letterEl.autocomplete = "off";
         letterEl.minLength = 1;
         letterEl.maxLength = 1;
-        letterEl.dataset.letterPosition = i;
 
-        letterEl.oninput = (ev) => typeLetter(letterEl, ev);
+        letterEl.dataset.letterPosition = i;
+        letterEl.dataset.numTrie = numTrie;
+
+        letterEl.onkeydown = (ev) => {
+            if(ev.key === "Backspace") {
+                if(letterEl.value) {
+                    letterEl.value = null;
+                    return;
+                };
+
+                const prev = document.querySelector(`.letter[data-letter-position="${i-1}"]`);
+                if(!prev) return;
+                ev.preventDefault();
+                prev.focus();
+            } else if (allowedCharacters.includes(ev.key.toUpperCase())) {
+                letterEl.value = ev.key.toUpperCase();
+                const next = document.querySelector(`.letter[data-letter-position="${i+1}"]`);
+                if(!next) return;
+
+                ev.preventDefault();
+                next.focus();
+            } 
+        };
 
         row.appendChild(letterEl);        
     }
@@ -48,104 +90,33 @@ function generateRow(grid, size) {
     grid.appendChild(row);
 }
 
-function typeLetter(element, event) {
-    element.value = String(event.target.value).toUpperCase();
+function generateKeyboard(word) {
+    const keyboardDiv = document.getElementById("keyboard");
+    if(!keyboardDiv) return;
+
+    allowedCharacters.forEach((char) => {
+        const letter = document.createElement("button");
+
+        letter.innerHTML = char;
+        letter.classList.add("letter");
+        letter.dataset.charValue = char;
+        letter.onclick = () => 
+
+        keyboardDiv.appendChild(letter);
+    });
 }
 
-function populateMap() {
-    // 1° - CPU
-    questoesMap.set(1, {
-        statement: "Componente do computador responsável por buscar, decodificar e executar instruções vindas da memória do computador.",
-        answer: "CPU"
-    });
-
-    // 2° - ULA
-    questoesMap.set(2, {
-        statement: "Unidade central de qualquer microprocessador responsável por executar operações aritméticas e lógicas.",
-        answer: "ULA"
-    });
+// function typeLetter(input, letter) {
+//     const value = letter.toUpperCase();
+//     if(!allowedCharacters.includes(value)) {
+//         input.value = null;
+//         return;
+//     };
+//     input.value = value;
     
-    // 3° - Registradores
-    questoesMap.set(3, {
-        statement: "Categoria de memória localizada dentro da CPU que lidera a hierarquia das memórias, sendo extremamente pequena e rápida.",
-        answer: "REGISTRADORES"
-    });
+//     const currentPosition = Number(input.dataset.letterPosition) + 1;
+//     const next = document.querySelector(`.letter[data-letter-position="${currentPosition}"]`);
+//     if(!next) return;
     
-    // 4° - RAM
-    questoesMap.set(4, {
-        statement: "Categoria de memória volátil que possui acesso direto à CPU e funciona como bancada de trabalho do computador.",
-        answer: "RAM"
-    });
-    
-    // 5° - ROM
-    questoesMap.set(5, {
-        statement: "Categoria de memória pré-programada utilizada para armazenar firmwares e softwares imutáveis como a BIOS.",
-        answer: "ROM"
-    });
-    
-    // 6° - EPROM
-    questoesMap.set(6, {
-        statement: "Categoria de memória ROM não volátil que pode ser reprogramada através de luz ultravioleta.",
-        answer: "EPROM"
-    });
-    
-    // 7° - Memória Flash
-    questoesMap.set(7, {
-        statement: "Categoria de memória não volátil utilizada em SSDs e pen drives por oferecer alta velocidade e durabilidade.",
-        answer: "FLASH"
-    });
-    
-    // 8° - Memória de Massa
-    questoesMap.set(8, {
-        statement: "Categoria de armazenamento não volátil responsável por guardar permanentemente grandes quantidades de dados.",
-        answer: "MEMORIADEMASSA"
-    });
-    
-    // 9° - DMA
-    questoesMap.set(9, {
-        statement: "Tecnologia que permite dispositivos de entrada e saída acessarem diretamente a memória RAM sem passar pela CPU.",
-        answer: "DMA"
-    });
-    
-    // 10° - CS (Chip Select)
-    questoesMap.set(10, {
-        statement: "Pino de controle responsável por ativar ou desativar chips específicos em um sistema.",
-        answer: "CS"
-    });
-    
-    // 11° - Address Bus
-    questoesMap.set(11, {
-        statement: "Categoria de barramento responsável por transmitir endereços de memória para leitura ou gravação de dados (em inglês).",
-        answer: "ADDRESSBUS"
-    });
-    
-    // 12° - Data Bus
-    questoesMap.set(12, {
-        statement: "Categoria de barramento responsável por transmitir dados entre os componentes do computador (em inglês).",
-        answer: "DATABUS"
-    });
-    
-    // 13° - I5
-    questoesMap.set(13, {
-        statement: "Nome da linha intermediária de microprocessadores da Intel.",
-        answer: "I5"
-    });
-    
-    // 14° - I7
-    questoesMap.set(14, {
-        statement: "Nome da linha de ponta de microprocessadores da Intel.",
-        answer: "I7"
-    });
-    
-    // 15° - Dual Core
-    questoesMap.set(15, {
-        statement: "Tecnologia de microprocessadores onde dois núcleos físicos compartilham recursos para melhorar o desempenho.",
-        answer: "DUALCORE"
-    });
-    
-    // 16° - Quad Core
-    questoesMap.set(16, {
-        statement: "Tecnologia de microprocessadores onde quatro núcleos físicos compartilham recursos para melhorar o desempenho.",
-        answer: "QUADCORE"
-    });
-}
+//     next.focus();
+// }
