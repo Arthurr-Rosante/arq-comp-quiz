@@ -5,9 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Assitência SPTech</title>
+
+    <script defer src="./main.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+    <header>
+        <h1 class="title">TermoTech</h1>
+        <div>
+            <label for="ipt-dificulty">Dificuldade</label>
+            <select id="ipt-dificulty">
+                <option value="easy">Fácil</option>
+                <option value="normal" selected>Normal</option>
+                <option value="hard">Difícil</option>
+                <option value="alan-turing">Alan Turing</option>
+            </select>
+        </div>
+    </header>
+    <main>
+        <div id="termo"></div>
+        <div id="keyboard"></div>
+    </main>
+    <footer>
+        <a>Por: <span><i class="fa-brands fa-github"></i> Arthurr-Rosante</span> | 1CCOB 2026.1</p>
+    </footer>
     
-<script src="./main.js"></script>
+<script>
+    const dificultyToNumTries = {
+        "easy": 8,
+        "normal": 6,
+        "hard": 3,
+        "alan-turing": 1
+    };
+
+    let currentQuestion;
+    let currentTrie = 1;
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. popula HashMap de Questões
+        populateMap();
+
+        // 2. Aleatoriza Primeira Questão
+        const questionId = Math.ceil(Math.random() * questoesMap.size);
+        currentQuestion = questoesMap.get(questionId);
+
+        // 3. Gera GRID do Termo
+        const dificulty = document.getElementById("ipt-dificulty")?.value || "normal";
+        const numTries =  dificultyToNumTries[dificulty];
+        
+        generateTermo(currentQuestion, numTries);
+    });
+    
+    document.getElementById("ipt-dificulty").addEventListener("change", (e) => {
+        const dificulty = e.target.value || "normal";
+        const numTries =  dificultyToNumTries[dificulty];
+        generateTermo(currentQuestion, numTries);
+    });
+</script>
 </body>
 </html>
