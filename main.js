@@ -34,6 +34,12 @@ function generateTermo(question, numTries) {
     for (let i = 0; i < numTries; i++) {
         generateRow(termoGrid, (i+1), answer.length);    
     }
+
+    // Seleciona primeira div.letter
+    const firstSelected = document.querySelector(`
+        .letter[data-letter-position='0'][data-num-trie='1'][aria-disabled='false']
+    `);
+    firstSelected.classList.add("letter--selected");
 }
 
 function generateStatement(grid, statement) {
@@ -52,37 +58,19 @@ function generateRow(grid, numTrie, size) {
 
     for (let i = 0; i < size; i++) {
         const letterEl = document.createElement("input");
+        
+        // Configurações da Input
         letterEl.classList.add("letter");
-
         letterEl.name = "ipt-letter";
         letterEl.type = "text";
         letterEl.autocomplete = "off";
         letterEl.minLength = 1;
         letterEl.maxLength = 1;
+        letterEl.disabled = true;
 
         letterEl.dataset.letterPosition = i;
         letterEl.dataset.numTrie = numTrie;
-
-        letterEl.onkeydown = (ev) => {
-            if(ev.key === "Backspace") {
-                if(letterEl.value) {
-                    letterEl.value = null;
-                    return;
-                };
-
-                const prev = document.querySelector(`.letter[data-letter-position="${i-1}"]`);
-                if(!prev) return;
-                ev.preventDefault();
-                prev.focus();
-            } else if (allowedCharacters.includes(ev.key.toUpperCase())) {
-                letterEl.value = ev.key.toUpperCase();
-                const next = document.querySelector(`.letter[data-letter-position="${i+1}"]`);
-                if(!next) return;
-
-                ev.preventDefault();
-                next.focus();
-            } 
-        };
+        letterEl.ariaDisabled = numTrie === 1 ? "false" : "true";
 
         row.appendChild(letterEl);        
     }
@@ -105,18 +93,3 @@ function generateKeyboard(word) {
         keyboardDiv.appendChild(letter);
     });
 }
-
-// function typeLetter(input, letter) {
-//     const value = letter.toUpperCase();
-//     if(!allowedCharacters.includes(value)) {
-//         input.value = null;
-//         return;
-//     };
-//     input.value = value;
-    
-//     const currentPosition = Number(input.dataset.letterPosition) + 1;
-//     const next = document.querySelector(`.letter[data-letter-position="${currentPosition}"]`);
-//     if(!next) return;
-    
-//     next.focus();
-// }
