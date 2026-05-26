@@ -23,9 +23,9 @@ body {
 
 header,
 footer {
-    min-width: 900px;
+    max-width: 1200px;
     width: 100%;
-
+    
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -37,7 +37,13 @@ footer {
 
 main {
     margin: 1rem 0;
+    max-width: 650px;
+    width: 100%;
     min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 2rem;
 }
 
 /* === ESTILOS - TERMO GRID === */
@@ -96,6 +102,12 @@ main {
     background-color: #26282b20;
 }
 
+.letter--wide {
+    width: 107.2px;
+    aspect-ratio: unset;
+    padding: 0 0.4rem;
+}
+
 /* === ESTILOS - TERMO STATEMENT === */
 .statement {
     max-width: 600px;
@@ -103,7 +115,7 @@ main {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-
+    
     padding: 1rem 0;
 }
 
@@ -113,4 +125,15 @@ main {
 
 .statement q {
     font-style: italic;
+}
+
+/* === ESTILOS - TERMO KEYBOARD === */
+#keyboard {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 0.4rem;
+}
+
+#keyboard .letter {
+    cursor: pointer;
 }

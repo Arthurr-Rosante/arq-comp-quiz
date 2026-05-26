@@ -88,8 +88,64 @@ function generateKeyboard(word) {
         letter.innerHTML = char;
         letter.classList.add("letter");
         letter.dataset.charValue = char;
-        letter.onclick = () => 
+        letter.onclick = (ev) => typeAction(ev, false);
 
         keyboardDiv.appendChild(letter);
     });
+
+    // Backspace Letter
+    const backspaceLetter = document.createElement("button");
+    backspaceLetter.classList.add("letter");
+    backspaceLetter.innerHTML = `<i class="fa-solid fa-delete-left"></i>`;
+    backspaceLetter.onclick = (ev) => backspaceAction(ev);
+    keyboardDiv.appendChild(backspaceLetter);
+    
+    // Enter Letter
+    const enterLetter = document.createElement("button");
+    enterLetter.classList.add("letter", "letter--wide");
+    enterLetter.innerHTML = `ENTER`;
+    enterLetter.onclick = (ev) => enterAction(ev);
+    keyboardDiv.appendChild(enterLetter);
+}
+
+function backspaceAction(event) {
+    const letterEl = document.querySelector(`.letter--selected`);
+    if(!letterEl) return;
+    const letterPos = Number(letterEl.dataset.letterPosition);
+
+    if(letterEl.value) {
+        letterEl.value = null;
+        return;
+    };
+    
+    const prev = document.querySelector(`.letter[data-letter-position="${letterPos-1}"]`);
+    if(!prev) return;
+    
+    event.preventDefault();
+    toggleSelectedElement(letterEl, prev);
+}
+
+function typeAction(event, fromClick = true) {
+    const letterEl = document.querySelector(`.letter--selected`);
+    if(!letterEl) return;
+    const letterPos = Number(letterEl.dataset.letterPosition);
+
+    if(fromClick) {
+        letterEl.value = event.key.toUpperCase();
+    } else {
+        letterEl.value = event.target.dataset.charValue;
+    }
+    
+    const next = document.querySelector(`.letter[data-letter-position="${letterPos+1}"]`);
+    if(!next) return;
+    
+    event.preventDefault();
+    toggleSelectedElement(letterEl, next);
+}
+
+function enterAction() {console.log("submit!")}
+
+function toggleSelectedElement(oldEl, newEl) {
+    oldEl.classList.remove("letter--selected");
+    newEl.classList.add("letter--selected");
 }

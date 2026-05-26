@@ -54,30 +54,19 @@
     });
 
     // Ouvinte de Digitação
-    document.body.addEventListener("keydown", (ev) => {
+    document.addEventListener("keydown", (ev) => {
+        if (ev.ctrlKey || ev.altKey || ev.metaKey) return;
+
         const letterEl = document.querySelector(`.letter--selected`);
         if(!letterEl) return;
         const letterPos = Number(letterEl.dataset.letterPosition);
 
         if(ev.key === "Backspace") {
-            if(letterEl.value) {
-                letterEl.value = null;
-                return;
-            };
-            
-            const prev = document.querySelector(`.letter[data-letter-position="${letterPos-1}"]`);
-            if(!prev) return;
-            
-            ev.preventDefault();
-            toggleSelectedElement(letterEl, prev);
+            backspaceAction(ev);
+        } else if (ev.key === "Enter") {
+            enterAction(ev);
         } else if (allowedCharacters.includes(ev.key.toUpperCase())) {
-            letterEl.value = ev.key.toUpperCase();
-            
-            const next = document.querySelector(`.letter[data-letter-position="${letterPos+1}"]`);
-            if(!next) return;
-            
-            ev.preventDefault();
-            toggleSelectedElement(letterEl, next);
+            typeAction(ev);
         } 
     });
     
@@ -87,12 +76,6 @@
         const numTries =  dificultyToNumTries[dificulty];
         generateTermo(currentQuestion, numTries);
     });
-
-    // Funções Utilitárias
-    function toggleSelectedElement(oldEl, newEl) {
-        oldEl.classList.remove("letter--selected");
-        newEl.classList.add("letter--selected");
-    }
 </script>
 </body>
 </html>
