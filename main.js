@@ -29,17 +29,16 @@ function generateTermo(question, numTries) {
     if(!termoGrid) return;
     termoGrid.innerHTML = "";
 
-
     generateStatement(termoGrid, statement);
     for (let i = 0; i < numTries; i++) {
         generateRow(termoGrid, (i+1), answer.length);    
     }
 
-    // Seleciona primeira div.letter
+    // Seleciona primeira div.cell
     const firstSelected = document.querySelector(`
-        .letter[data-letter-position='0'][data-num-trie='1'][aria-disabled='false']
+        .cell[data-letter-position='0']
     `);
-    firstSelected.classList.add("letter--selected");
+    firstSelected.classList.add("cell--selected");
 }
 
 function generateStatement(grid, statement) {
@@ -55,24 +54,26 @@ function generateRow(grid, numTrie, size) {
 
     const row = document.createElement("div");
     row.classList.add("row");
+    if(numTrie !== 1) row.classList.add("row--blocked");
+    row.dataset.numTrie = numTrie;
 
     for (let i = 0; i < size; i++) {
-        const letterEl = document.createElement("input");
+        const cellEl = document.createElement("input");
         
         // Configurações da Input
-        letterEl.classList.add("letter");
-        letterEl.name = "ipt-letter";
-        letterEl.type = "text";
-        letterEl.autocomplete = "off";
-        letterEl.minLength = 1;
-        letterEl.maxLength = 1;
-        letterEl.disabled = true;
+        cellEl.classList.add("cell");
+        cellEl.name = "ipt-letter";
+        cellEl.type = "text";
+        cellEl.autocomplete = "off";
+        cellEl.minLength = 1;
+        cellEl.maxLength = 1;
+        cellEl.disabled = true;
 
-        letterEl.dataset.letterPosition = i;
-        letterEl.dataset.numTrie = numTrie;
-        letterEl.ariaDisabled = numTrie === 1 ? "false" : "true";
+        cellEl.dataset.letterPosition = i;
+        // cellEl.dataset.numTrie = numTrie;
+        // cellEl.ariaDisabled = numTrie === 1 ? "false" : "true";
 
-        row.appendChild(letterEl);        
+        row.appendChild(cellEl);        
     }
 
     grid.appendChild(row);
@@ -83,69 +84,69 @@ function generateKeyboard(word) {
     if(!keyboardDiv) return;
 
     allowedCharacters.forEach((char) => {
-        const letter = document.createElement("button");
+        const cell = document.createElement("button");
 
-        letter.innerHTML = char;
-        letter.classList.add("letter");
-        letter.dataset.charValue = char;
-        letter.onclick = (ev) => typeAction(ev, false);
+        cell.innerHTML = char;
+        cell.classList.add("cell");
+        cell.dataset.charValue = char;
+        cell.onclick = (ev) => typeAction(ev, false);
 
-        keyboardDiv.appendChild(letter);
+        keyboardDiv.appendChild(cell);
     });
 
-    // Backspace Letter
-    const backspaceLetter = document.createElement("button");
-    backspaceLetter.classList.add("letter");
-    backspaceLetter.innerHTML = `<i class="fa-solid fa-delete-left"></i>`;
-    backspaceLetter.onclick = (ev) => backspaceAction(ev);
-    keyboardDiv.appendChild(backspaceLetter);
+    // Backspace Cell
+    const backspaceCell = document.createElement("button");
+    backspaceCell.classList.add("cell");
+    backspaceCell.innerHTML = `<i class="fa-solid fa-delete-left"></i>`;
+    backspaceCell.onclick = (ev) => backspaceAction(ev);
+    keyboardDiv.appendChild(backspaceCell);
     
-    // Enter Letter
-    const enterLetter = document.createElement("button");
-    enterLetter.classList.add("letter", "letter--wide");
-    enterLetter.innerHTML = `ENTER`;
-    enterLetter.onclick = (ev) => enterAction(ev);
-    keyboardDiv.appendChild(enterLetter);
+    // Enter Cell
+    const enterCell = document.createElement("button");
+    enterCell.classList.add("cell", "cell--wide");
+    enterCell.innerHTML = `ENTER`;
+    enterCell.onclick = (ev) => enterAction(ev);
+    keyboardDiv.appendChild(enterCell);
 }
 
 function backspaceAction(event) {
-    const letterEl = document.querySelector(`.letter--selected`);
-    if(!letterEl) return;
-    const letterPos = Number(letterEl.dataset.letterPosition);
+    const cellEl = document.querySelector(`.cell--selected`);
+    if(!cellEl) return;
+    const letterPos = Number(cellEl.dataset.letterPosition);
 
-    if(letterEl.value) {
-        letterEl.value = null;
+    if(cellEl.value) {
+        cellEl.value = null;
         return;
     };
     
-    const prev = document.querySelector(`.letter[data-letter-position="${letterPos-1}"]`);
+    const prev = document.querySelector(`.cell[data-letter-position="${letterPos-1}"]`);
     if(!prev) return;
     
     event.preventDefault();
-    toggleSelectedElement(letterEl, prev);
+    toggleSelectedElement(cellEl, prev);
 }
 
 function typeAction(event, fromClick = true) {
-    const letterEl = document.querySelector(`.letter--selected`);
-    if(!letterEl) return;
-    const letterPos = Number(letterEl.dataset.letterPosition);
+    const cellEl = document.querySelector(`.cell--selected`);
+    if(!cellEl) return;
+    const letterPos = Number(cellEl.dataset.letterPosition);
 
     if(fromClick) {
-        letterEl.value = event.key.toUpperCase();
+        cellEl.value = event.key.toUpperCase();
     } else {
-        letterEl.value = event.target.dataset.charValue;
+        cellEl.value = event.target.dataset.charValue;
     }
     
-    const next = document.querySelector(`.letter[data-letter-position="${letterPos+1}"]`);
+    const next = document.querySelector(`.cell[data-letter-position="${letterPos+1}"]`);
     if(!next) return;
     
     event.preventDefault();
-    toggleSelectedElement(letterEl, next);
+    toggleSelectedElement(cellEl, next);
 }
 
 function enterAction() {console.log("submit!")}
 
 function toggleSelectedElement(oldEl, newEl) {
-    oldEl.classList.remove("letter--selected");
-    newEl.classList.add("letter--selected");
+    oldEl.classList.remove("cell--selected");
+    newEl.classList.add("cell--selected");
 }

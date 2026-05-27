@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
     <title>Assitência SPTech</title>
 
     <script defer src="./main.js"></script>
@@ -27,7 +28,7 @@
         <div id="keyboard"></div>
     </main>
     <footer>
-        <a>Por: <span><i class="fa-brands fa-github"></i> Arthurr-Rosante</span> | 1CCOB 2026.1</p>
+        <a href="http://github.com/arthurr-rosante" target="_blank">Por: <span><i class="fa-brands fa-github"></i> Arthurr-Rosante</span> | 1CCOB 2026.1</p>
     </footer>
     
 <script>
@@ -57,9 +58,9 @@
     document.addEventListener("keydown", (ev) => {
         if (ev.ctrlKey || ev.altKey || ev.metaKey) return;
 
-        const letterEl = document.querySelector(`.letter--selected`);
-        if(!letterEl) return;
-        const letterPos = Number(letterEl.dataset.letterPosition);
+        const cellEl = document.querySelector(`.cell--selected`);
+        if(!cellEl) return;
+        const cellPos = Number(cellEl.dataset.cellPosition);
 
         if(ev.key === "Backspace") {
             backspaceAction(ev);
