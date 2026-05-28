@@ -79,6 +79,7 @@ footer span {
     color: var(--foreground);
     border-radius: 2rem;
     font-weight: bold;
+    outline: 3px solid var(--wrongLetter);
 }
 
 /* === ESTILOS - TERMO GRID === */
@@ -116,19 +117,19 @@ footer span {
 }
 
 .cell--selected {
-    border-bottom: 8px solid var(--border);
+    border-bottom: 10px solid var(--border);
 }
 
-.cell--wrong {
-    background-color: var(--wrongLetter);
+.cell--wrongLetter {
+    background-color: var(--wrongLetter) !important;
     border: none;
 }
-.cell--wrongpos {
-    background-color: var(--wrongPos);
+.cell--wrongPos {
+    background-color: var(--wrongPos) !important;
     border: none;   
 }
-.cell--correctpos {
-    background-color: var(--rightPos);
+.cell--rightPos {
+    background-color: var(--rightPos) !important;
     border: none;
 }
 
@@ -177,4 +178,10 @@ footer span {
 }
 #keyboard .cell:focus {
     outline: 4px solid var(--wrongLetter);
+}
+
+/* === ESTILOS - ANIMAÇÕES === */
+.wiggle {
+    position: relative;
+    animation: wiggle-animation 1s linear 0 infinite alternate-reverse;
 }

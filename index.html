@@ -65,12 +65,12 @@
         if(ev.key === "Backspace") {
             backspaceAction(ev);
         } else if (ev.key === "Enter") {
-            enterAction(ev);
+            enterAction(ev, currentQuestion.answer);
         } else if (allowedCharacters.includes(ev.key.toUpperCase())) {
             typeAction(ev);
         } 
     });
-    
+
     // Ouvinte de Mudança de Dificuldade
     document.getElementById("ipt-dificulty").addEventListener("change", (e) => {
         const dificulty = e.target.value || "normal";
