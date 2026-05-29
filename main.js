@@ -16,9 +16,34 @@ const questions = [
     { answer: "DUALCORE", statement: "Tecnologia de microprocessadores onde dois núcleos físicos compartilham recursos para melhorar o desempenho." },
     { answer: "QUADCORE", statement: "Tecnologia de microprocessadores onde quatro núcleos físicos compartilham recursos para melhorar o desempenho." },
 ];
-
 const allowedCharacters = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ57"];
 
+// === FUNÇÕES DE LOOP DA GAMEPLAY === //
+function startGame() {
+    currentTrie = 1;
+
+    const dificulty = document.getElementById("ipt-dificulty")?.value || "normal";
+    const numTries = dificultyToNumTries[dificulty];
+
+    randomizeQuestion();
+    generateTermo(currentQuestion, numTries);
+    generateKeyboard();
+
+    const quizProgress = document.getElementById("quiz-progress");
+    if(!quizProgress) return;
+    quizProgress.innerHTML = `${questions.length - questionsToShow.length}/${questions.length}`;
+}
+
+function resetGame() {
+    questionsToShow = [...questions];
+    qtdAcertos = 0;
+    qtdErros = 0;
+
+    updateScore();
+    startGame();
+}
+
+// === FUNÇÕES GENERATE === //
 function generateTermo(question, numTries) {
     const {answer, statement} = question;
 
@@ -82,9 +107,10 @@ function generateCell(row, position) {
     row.appendChild(cellEl);
 }
 
-function generateKeyboard(word) {
+function generateKeyboard() {
     const keyboardDiv = document.getElementById("keyboard");
     if(!keyboardDiv) return;
+    keyboardDiv.innerHTML = "";
 
     allowedCharacters.forEach((char) => {
         const cell = document.createElement("button");
@@ -112,6 +138,8 @@ function generateKeyboard(word) {
     keyboardDiv.appendChild(enterCell);
 }
 
+
+// === FUNÇÕES DE AÇÃO === //
 function backspaceAction(event) {
     event.preventDefault();
 
@@ -163,7 +191,7 @@ function enterAction(event, currentWord) {
 
     const isIncomplete = Array.from(activeCells).some((cell) => !cell.value);
     if(isIncomplete) {
-        // wiggleAnimation(currentRow);
+        wiggleAnimation(currentRow);
         return;
     }
     
@@ -194,8 +222,8 @@ function enterAction(event, currentWord) {
 
     // Checa se é a última row
     const nextRow = document.querySelector(`.row[data-num-trie="${currentTrie + 1}"]`);
-    if(!nextRow) {
-        finishGame();
+    if(!nextRow || rightPos.length === wordArray.length) {
+        advanceQuestion();
         return;
     } else {   
         currentRow.classList.add("row--blocked");
@@ -209,13 +237,87 @@ function enterAction(event, currentWord) {
         currentTrie++;
         toggleSelectedCell(oldSelected, newSelected);
     }
+
+    updateKeyboard(rightPos, wrongPos, wrongLetter);
 }
 
-function finishGame() {
-    
+function updateKeyboard(rightPos, wrongPos, wrongLetter) {
+    const keyboardDiv = document.getElementById("keyboard");
+    if(!keyboardDiv) return;
+
+    keyboardDiv.querySelectorAll(".cell[data-char-value]").forEach((cell) => {
+        const charValue = cell.dataset.charValue;
+        if(!charValue) return;
+
+        if(rightPos.includes(charValue)) {
+            cell.classList.add("cell--rightPos");
+        } else if(wrongPos.includes(charValue)) {
+            cell.classList.add("cell--wrongPos");
+        } else if(wrongLetter.includes(charValue)) {
+            cell.classList.add("cell--wrongLetter");
+        }
+    });
 }
 
+function advanceQuestion() {
+    const selectedCell = document.querySelector(".cell--selected");
+    if(!selectedCell) return;
+    selectedCell.classList.remove("cell--selected");
+
+    const currentRow = document.querySelector(`.row[data-num-trie="${currentTrie}"]`);
+    if(!currentRow) return;
+    const allRight = Array.from(currentRow.querySelectorAll(".cell"))
+        .every(cell => cell.classList.contains("cell--rightPos"));
+
+    if(allRight) {
+        qtdAcertos++;
+    } else {
+        qtdErros++;
+    }
+    updateScore();
+
+    const statementDiv = document.querySelector("#termo .statement");
+    if(!statementDiv) return;
+
+    const advanceBtn = document.createElement("button");
+    advanceBtn.classList.add("advance-btn");
+    advanceBtn.innerHTML = `<i class="fa-solid ${questionsToShow.length > 0 ? "fa-arrow-right" : "fa-arrow-rotate-right"}"></i>`;
+    advanceBtn.onclick = () => {
+        if(questionsToShow.length > 0) {
+            startGame();
+        } else {
+            resetGame();
+        }
+    };
+
+    statementDiv.appendChild(advanceBtn);
+}
+
+// === FUNÇÕES UTILITÁRIAS === //
 function toggleSelectedCell(oldEl, newEl) {
     oldEl.classList.remove("cell--selected");
     newEl.classList.add("cell--selected");
+}
+
+function wiggleAnimation(element) {
+    if(element.classList.contains("wiggle")) return;
+    
+    element.classList.add("wiggle");
+    setTimeout(() => {
+        element.classList.remove("wiggle");
+    }, 400);
+}
+
+function randomizeQuestion() {
+    const questionId = Math.floor(Math.random() * questionsToShow.length);
+    currentQuestion = questionsToShow[questionId];
+
+    questionsToShow.splice(questionId, 1);
+}
+
+function updateScore() {
+    const acertosEl = document.getElementById("quiz-acertos");
+    const errosEl = document.getElementById("quiz-erros");
+    if(acertosEl) acertosEl.innerHTML = qtdAcertos;
+    if(errosEl) errosEl.innerHTML = qtdErros;
 }

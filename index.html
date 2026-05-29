@@ -13,14 +13,21 @@
 <body>
     <header>
         <h1 class="title">TermoTech</h1>
-        <div>
-            <label for="ipt-dificulty">Dificuldade</label>
-            <select id="ipt-dificulty">
-                <option value="easy">Fácil</option>
-                <option value="normal" selected>Normal</option>
-                <option value="hard">Difícil</option>
-                <option value="alan-turing">Alan Turing</option>
-            </select>
+        <div class="header-actions">
+            <div class="header-item">
+                <p>Progresso: <span id="quiz-progress">0/0</span></p>
+                <p>| Acertos: <span id="quiz-acertos">0</span> | Erros: <span id="quiz-erros">0</span></p>
+                <button onclick="resetGame()" class="btn-reset-game"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+            </div>
+            <div class="header-item">
+                <label for="ipt-dificulty">Dificuldade</label>
+                <select id="ipt-dificulty">
+                    <option value="easy">Fácil</option>
+                    <option value="normal" selected>Normal</option>
+                    <option value="hard">Difícil</option>
+                    <option value="alan-turing">Alan Turing</option>
+                </select>
+            </div>
         </div>
     </header>
     <main>
@@ -39,19 +46,16 @@
         "alan-turing": 1
     };
 
-    let currentQuestion;
+    
     let currentTrie = 1;
+    let questionsToShow;
+    let currentQuestion;
+    let qtdAcertos = 0;
+    let qtdErros = 0;
+    
     document.addEventListener("DOMContentLoaded", () => {
-        // 1. Aleatoriza Primeira Questão
-        const questionId = Math.floor(Math.random() * questions.length);
-        currentQuestion = questions[questionId];
-
-        // 2. Gera GRID do Termo
-        const dificulty = document.getElementById("ipt-dificulty")?.value || "normal";
-        const numTries =  dificultyToNumTries[dificulty];
-        
-        generateTermo(currentQuestion, numTries);
-        generateKeyboard(currentQuestion.answer);
+        questionsToShow = [...questions];
+        startGame();
     });
 
     // Ouvinte de Digitação
@@ -75,6 +79,8 @@
     document.getElementById("ipt-dificulty").addEventListener("change", (e) => {
         const dificulty = e.target.value || "normal";
         const numTries =  dificultyToNumTries[dificulty];
+        currentTrie = 1;
+
         generateTermo(currentQuestion, numTries);
     });
 </script>

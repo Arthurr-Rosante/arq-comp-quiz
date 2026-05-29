@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-    --background: #6E5C62;
-    --foreground: #FAFAFF;
+  --background:    #1C1714;
+  --foreground:    #EDE5DD;
 
-    --muted: #B7AEB4;
-    --border: #4C4347;
-    --disabled: #615458;
+  --muted:         #6A5A4E;
+  --border:        #332820;
+  --disabled:      #2C2018;
 
-    --rightPos: #3AA394;
-    --wrongPos: #D3AD69;
-    --wrongLetter: #312A2C;
+  --rightPos:      #4BAF8C;
+  --wrongPos:      #C99240;
+  --wrongLetter:   #291a10;
 }
 
 *,
@@ -45,6 +45,19 @@ footer {
     align-items: center;
     justify-content: space-between;
     padding: 0 0.4rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.header-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 main {
@@ -100,6 +113,7 @@ footer span {
     padding: 0 0.4rem;
 }
 
+.advance-btn,
 .cell {
     background-color: var(--background);
     color: var(--foreground);
@@ -123,14 +137,17 @@ footer span {
 .cell--wrongLetter {
     background-color: var(--wrongLetter) !important;
     border: none;
+    animation: turnLetter 300ms ease-in 1;
 }
 .cell--wrongPos {
     background-color: var(--wrongPos) !important;
     border: none;   
+    animation: turnLetter 300ms ease-in 1;
 }
 .cell--rightPos {
     background-color: var(--rightPos) !important;
     border: none;
+    animation: turnLetter 300ms ease-in 1;
 }
 
 .row--blocked .cell {
@@ -146,6 +163,7 @@ footer span {
 
 /* === ESTILOS - TERMO STATEMENT === */
 .statement {
+    position: relative;
     max-width: 600px;
     display: flex;
     flex-direction: column;
@@ -157,11 +175,25 @@ footer span {
 
 .statement p {
     font-weight: bold;
+    margin-bottom: 0.5rem;
 }
 
 .statement q {
     font-style: italic;
     color: var(--muted);
+}
+
+.advance-btn {
+    position: absolute;
+    top: 50%;
+    right: -15%;
+    transform: translateY(-50%);
+
+    cursor: pointer;
+    transition: background 0.2s ease-in;
+}
+.advance-btn:hover {
+    background-color: var(--wrongLetter);
 }
 
 /* === ESTILOS - TERMO KEYBOARD === */
@@ -182,6 +214,36 @@ footer span {
 
 /* === ESTILOS - ANIMAÇÕES === */
 .wiggle {
-    position: relative;
-    animation: wiggle-animation 1s linear 0 infinite alternate-reverse;
+  animation: wiggleAnimation 250ms ease-in-out infinite alternate-reverse;
+}
+
+@keyframes wiggleAnimation {
+  0%, 50%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-12px);
+  }
+  75% {
+    transform: translateX(12px);
+  } 
+}
+
+@keyframes turnLetter {
+    from { transform: rotateY(0); }
+    to { transform: rotateY(3.142rad);}
+}
+
+.btn-reset-game {
+    background-color: var(--background);
+    color: var(--foreground);
+
+    padding: 0.5rem;
+    border-radius: 0.4rem;
+
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    
+    border: 3px solid var(--border);
 }
